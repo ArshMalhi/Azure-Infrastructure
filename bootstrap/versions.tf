@@ -12,13 +12,13 @@ terraform {
     time = {
       source  = "hashicorp/time"
       version = "~> 0.12"
-    }   
+    }
   }
 }
 
 provider "azurerm" {
-  subscription_id = var.subscription_id
+  subscription_id                 = var.subscription_id
   resource_provider_registrations = "core"
-  storage_use_azuread = true
-  features{}
+  storage_use_azuread             = true
+  features {}
 }
