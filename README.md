@@ -5,38 +5,12 @@
 Citadel is my hands-on build of an enterprise-style Azure foundation: governance, networking, compute, storage, monitoring and backup, all as code. It's mapped to the **AZ-104 (Azure Administrator)** skill areas, so every phase is something I've studied *and* built.
 
 ---
-
-## 🗺️ Architecture
-
-```mermaid
-flowchart LR
-    subgraph State["🔐 rg-citadel-tfstate"]
-        SA[(Storage Account<br/>Terraform state)]
-    end
-
-    subgraph Hub["🛡️ Hub"]
-        HV[Hub VNet]
-        BAS[Bastion]
-        DNS[Private DNS]
-    end
-
-    subgraph Spoke["⚙️ App Spoke"]
-        SV[Spoke VNet]
-        VM[VM Scale Set]
-        ST[(Storage +<br/>Private Endpoint)]
-    end
-
-    subgraph Mgmt["📊 Management"]
-        LAW[Log Analytics]
-        RSV[Recovery Services Vault]
-    end
-
-    HV <-->|peering| SV
-    VM -.->|diagnostics| LAW
-    VM -.->|backup| RSV
-```
-
----
+## Structure 
+| Zone | Role | Contains |
+|---|---|---|
+| 🏛️ Sanctum | Hub | Hub VNet, Bastion, private DNS |
+| 🏕️ Outpost | Spoke | Application workload: VM Scale Set |
+| 🛰️ Zion | Management | Log Analytics, Recovery Services Vault |
 
 ## 🧱 Repo structure
 
