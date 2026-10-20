@@ -9,15 +9,11 @@ permissions:
   contents: read
 
 jobs:
-  validate:
-    name: fmt + validate (${{ matrix.stack }})
+  # Formatting is checked once, from the repo root, so every folder
+  # (bootstrap, landing-zone AND modules) is covered.
+  fmt:
+    name: terraform fmt (whole repo)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        stack: [bootstrap]  
-    defaults:
-      run:
-        working-directory: ${{ matrix.stack }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -25,6 +21,22 @@ jobs:
       - name: terraform fmt
         run: terraform fmt -check -recursive
 
+  # Validation runs once per stack (each folder with its own state).
+  validate:
+    name: validate (${{ matrix.stack }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # if one stack fails, still show the result of the other
+      matrix:
+        stack: [bootstrap, landing-zone]
+    defaults:
+      run:
+        working-directory: ${{ matrix.stack }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      # -backend=false: CI only checks the code, it never touches real state
       - name: terraform init
         run: terraform init -backend=false -input=false
 
