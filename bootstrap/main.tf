@@ -36,7 +36,7 @@ resource "azurerm_storage_account" "tfstate" {
   shared_access_key_enabled       = false # Entra ID auth only
 
   blob_properties {
-    versioning_enabled = true 
+    versioning_enabled = true
 
     delete_retention_policy {
       days = 7
