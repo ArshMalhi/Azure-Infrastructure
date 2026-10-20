@@ -15,10 +15,10 @@ locals {
     managed_by  = "terraform"
     repo        = "Azure-Infrastructure"
   }
-  
+
   resource_groups = {
-    sanctum    = "Shared networking: hub VNet, Bastion, private DNS"
-    outpost    = "Application workload spoke: VM Scale Set"
-    zion       = "Monitoring and recovery: Log Analytics, Recovery Services Vault"
+    sanctum = "Shared networking: hub VNet, Bastion, private DNS"
+    outpost = "Application workload spoke: VM Scale Set"
+    zion    = "Monitoring and recovery: Log Analytics, Recovery Services Vault"
   }
 }
