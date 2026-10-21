@@ -1,4 +1,3 @@
-
 version: 2
 updates:
   # The actions used in our workflows (checkout, setup-terraform, ...)

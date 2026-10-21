@@ -4,18 +4,19 @@ on:
   push:
     branches: [main]
     paths:
-      - '**.tf'
-      - '**.hcl'
-      - '.github/workflows/**'
+      - "**.tf"
+      - "**.hcl"
+      - ".github/workflows/**"
   pull_request:
     paths:
-      - '**.tf'
-      - '**.hcl'
-      - '.github/workflows/**'
-    workflow_dispatch:
-    concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+      - "**.tf"
+      - "**.hcl"
+      - ".github/workflows/**"
+  workflow_dispatch: # adds a "Run workflow" button in the Actions tab
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -28,7 +29,7 @@ jobs:
   # Formatting is checked once, from the repo root, so every folder
   # (bootstrap, landing-zone AND modules) is covered.
   fmt:
-    name: Step 1: Format Check
+    name: Format Check
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -40,9 +41,9 @@ jobs:
       - name: terraform fmt
         run: terraform fmt -check -recursive -diff
 
-  # Validation runs once per stack (each folder with its own state).
   validate:
     name: validate (${{ matrix.stack }})
+    needs: fmt
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -65,7 +66,7 @@ jobs:
       - name: terraform validate
         run: terraform validate
 
-   lint:
+  lint:
     name: Lint
     needs: fmt
     runs-on: ubuntu-latest
@@ -73,14 +74,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: terraform-linters/setup-tflint@v4
- 
+
       # -f compact turns problems into inline annotations on the PR diff
       - name: tflint
-        run: terraform lint --recursive --config "$GITHUB_WORKSPACE/.tflint.hcl" -f compact
-    
-    summary:
+        run: tflint --recursive --config "$GITHUB_WORKSPACE/.tflint.hcl" -f compact
+
+  summary:
     name: Summary
-    needs: [fmt, validate, lint, security]
+    needs: [fmt, validate, lint]
     if: always() # run even when other jobs failed: that's when it's most useful
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -95,6 +96,4 @@ jobs:
             echo "| Format | ${{ needs.fmt.result }} |"
             echo "| Validate | ${{ needs.validate.result }} |"
             echo "| Lint | ${{ needs.lint.result }} |"
-            echo "| Security scan | ${{ needs.security.result }} |"
           } >> "$GITHUB_STEP_SUMMARY"
- 
