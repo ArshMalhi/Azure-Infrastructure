@@ -12,6 +12,13 @@ Citadel is my hands-on build of an enterprise-style Azure foundation: governance
 | 🏕️ Outpost | Spoke | Application workload: VM Scale Set |
 | 🛰️ Zion | Management | Log Analytics, Recovery Services Vault |
 
+## PIPELINE STRUCTURE
+```
+             ┌─ Validate (bootstrap) ──┐
+             ├─ Validate (landing-zone)┤
+  Format ────┼─ Lint ──────────────────┼──── Summary
+             └─ Security scan ─────────┘
+```
 ## 🧱 Repo structure
 
 ```

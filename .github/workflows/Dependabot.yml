@@ -1,0 +1,17 @@
+
+version: 2
+updates:
+  # The actions used in our workflows (checkout, setup-terraform, ...)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Terraform providers (azurerm, random, time)
+  - package-ecosystem: "terraform"
+    directories:
+      - "/bootstrap"
+      - "/landing-zone"
+      - "/modules/resource-group"
+    schedule:
+      interval: "weekly"
