@@ -80,7 +80,6 @@ jobs:
         run: tflint --recursive --config "$GITHUB_WORKSPACE/.tflint.hcl" -f compact
 
   Summary:
-    name: Sum
     needs: [fmt, validate, lint]
     if: always() # run even when other jobs failed: that's when it's most useful
     runs-on: ubuntu-latest
