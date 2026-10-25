@@ -1,24 +1,12 @@
-name: terraform-continuous-integration
+name: terraform-ci
 
 on:
   push:
     branches: [main]
-    paths:
-      - "**.tf"
-      - "**.hcl"
-      - ".github/workflows/**"
+    paths: ["**.tf", "**.hcl", ".github/workflows/**"]
   pull_request:
-    paths:
-      - "**.tf"
-      - "**.hcl"
-      - ".github/workflows/**"
-  workflow_dispatch: # adds a "Run workflow" button in the Actions tab
-    inputs:
-      run_tflint:
-        description: "Run TFLint"
-        required: false
-        type: boolean
-        default: false
+    paths: ["**.tf", "**.hcl", ".github/workflows/**"]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,80 +15,30 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  TF_VERSION: "^1.9.0" # any 1.x from 1.9 up, matching required_version
-  TF_IN_AUTOMATION: "true" # tells Terraform it's in CI (less chatty output)
-
 jobs:
-  # Formatting is checked once, from the repo root, so every folder
-  # (bootstrap, landing-zone AND modules) is covered.
-  fmt:
-    name: Format Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v6
-      - uses: hashicorp/setup-terraform@v4
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      - name: terraform fmt
-        run: terraform fmt -check -recursive -diff
-
-  validate:
-    name: validate (${{ matrix.stack }})
-    needs: fmt
+  checks:
+    name: Terraform checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    strategy:
-      fail-fast: false # if one stack fails, still show the result of the other
-      matrix:
-        stack: [bootstrap, landing-zone]
-    defaults:
-      run:
-        working-directory: ${{ matrix.stack }}
     steps:
       - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v4
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      # -backend=false: CI only checks the code, it never touches real state
-      - name: terraform init
-        run: terraform init -backend=false -input=false
-
-      - name: terraform validate
-        run: terraform validate
-
-  lint:
-    name: Lint
-    if: ${{ inputs.run_tflint }}
-    needs: fmt
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v6
       - uses: terraform-linters/setup-tflint@v4
 
-      # -f compact turns problems into inline annotations on the PR diff
-      - name: tflint
-        run: tflint --recursive --config "$GITHUB_WORKSPACE/.tflint.hcl" -f compact
+      - name: Format
+        run: terraform fmt -check -recursive -diff
 
-  Summary:
-    name: CI Results
-    needs: [fmt, validate, lint]
-    if: always() # run even when other jobs failed: that's when it's most useful
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    steps:
-      - name: Write summary
+      - name: Validate bootstrap
+        working-directory: bootstrap
         run: |
-          {
-            echo "## 🏰 Citadel CI"
-            echo ""
-            echo "| Check | Result |"
-            echo "|---|---|"
-            echo "| Format | ${{ needs.fmt.result }} |"
-            echo "| Validate | ${{ needs.validate.result }} |"
-            echo "| Lint | ${{ needs.lint.result }} |"
-          } >> "$GITHUB_STEP_SUMMARY"
+          terraform init -backend=false -input=false
+          terraform validate
+
+      - name: Validate landing zone
+        working-directory: landing-zone
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
+
+      - name: Lint
+        run: tflint --recursive --config "$GITHUB_WORKSPACE/.tflint.hcl" -f compact

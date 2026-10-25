@@ -31,3 +31,14 @@ variable "owner" {
   type        = string
   default     = "Arsh Malhi"
 }
+
+variable "monthly_budget" {
+  description = "Monthly spend before alerts fire."
+  type        = number
+  default     = 20
+}
+
+variable "alert_email" {
+  description = "Email addresses for budget alerts."
+  type        = string
+}
