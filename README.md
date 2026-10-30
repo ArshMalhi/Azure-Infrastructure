@@ -42,15 +42,15 @@ Citadel is my hands-on build of an enterprise-style Azure foundation: governance
 ### Phase 1: Foundations
 - [x] Repo structure, `.gitignore`, naming and tagging conventions
 - [x] Bootstrap code: hardened state storage
-- [ ] Apply bootstrap and verify the lock in the portal
-- [ ] Landing zone code: resource groups and remote backend
-- [ ] Apply landing zone
-- [ ] CI pipeline green ✅
+- [x] Apply bootstrap and verify the lock in the portal
+- [x] Landing zone code: resource groups and remote backend
+- [x] Apply landing zone
+- [x] CI pipeline green ✅
 
 ### Phase 2: Identity & Governance
-- [ ] Azure Policy: allowed regions, required tags
+- [x] Azure Policy: allowed regions, required tags
 - [ ] Custom RBAC role assignments
-- [ ] Budget and cost alerts
+- [x] Budget and cost alerts
 
 ### Phase 3: Networking
 - [ ] Hub and spoke VNets + peering

@@ -12,5 +12,7 @@ updates:
       - "/bootstrap"
       - "/landing-zone"
       - "/modules/resource-group"
+      - "/modules/budget"
+      - "/modules/policy-assignment"
     schedule:
       interval: "weekly"
