@@ -22,22 +22,22 @@ module "budget" {
 module "policy_allowed_locations" {
   source = "../modules/policy-assignment"
 
-  name                = "allowed-locations-${local.name_suffix}"
-  subscription_id     = data.azurerm_subscription.current.id
-  policy_display_name = "Allowed locations"
-  parameters = { listOfAllowedLocations = ["australiaeast", "australiasoutheast", "australiacentral"] }
-  enforce             = true
+  name                   = "allowed-locations-${local.name_suffix}"
+  subscription_id        = data.azurerm_subscription.current.id
+  policy_display_name    = "Allowed locations"
+  parameters             = { listOfAllowedLocations = ["australiaeast", "australiasoutheast", "australiacentral"] }
+  enforce                = true
   non_compliance_message = "You may only establish Citadel in Australia at the Moment."
 }
 
-module "policy_allowed_locations_rg"{
+module "policy_allowed_locations_rg" {
   source = "../modules/policy-assignment"
 
-  name                = "allowed-locations-rg-${local.name_suffix}"
-  subscription_id     = data.azurerm_subscription.current.id
-  policy_display_name = "Allowed locations for resource groups"
-  parameters = { listOfAllowedLocations = ["australiaeast", "australiasoutheast", "australiacentral"] }
-  enforce             = true
+  name                   = "allowed-locations-rg-${local.name_suffix}"
+  subscription_id        = data.azurerm_subscription.current.id
+  policy_display_name    = "Allowed locations for resource groups"
+  parameters             = { listOfAllowedLocations = ["australiaeast", "australiasoutheast", "australiacentral"] }
+  enforce                = true
   non_compliance_message = "You may only establish Citadel resources in Australia at the Moment."
 }
 
